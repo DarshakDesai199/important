@@ -1,0 +1,36 @@
+/// Image picker
+
+final picker = ImagePicker();
+  File? _image;
+
+  Future getImage() async {
+    var pickedFile = await picker.getImage(source: ImageSource.gallery);
+    setState(() {
+      if (pickedFile != null) {
+        _image = File(pickedFile.path);
+      }
+    });
+  }
+
+
+/// Image upload in API
+
+ Future<String?> uploadAvatarWithDio({String? fileName}) async {
+    print(fileName);
+    dio.FormData formData = new dio.FormData.fromMap({
+      "avatar":
+          await dio.MultipartFile.fromFile(_image!.path, filename: fileName),
+    });
+
+    dio.Response response = await dio.Dio().post(
+        "https://codelineinfotech.com/student_api/User/user_avatar_upload.php",
+        data: formData);
+
+    print("data ${response.data}");
+
+    if (response.data['url'] != null) {
+      return response.data['url'];
+    } else {
+      return null;
+    }
+  }

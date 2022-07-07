@@ -1,0 +1,75 @@
+Pacakges :
+
+1.shared_preferences =  shared_preferences:^2.0.7
+2.google_fonts = google_fonts:
+3.Svg_picture = flutter_svg:^0.21.0
+4.Country_code = country_code_picker: ^2.0.1
+5.Image_picker:
+	 image_picker:^0.7.5
+	 dio: ^4.0.4
+
+6.Otp_Textfiled = flutter_otp_text_field:^1.0.0
+
+7.API Implemation:
+	http: ^0.13.1
+
+8.Firebase Implemation :
+	firebase_core: ^1.0.4
+	firebase_auth: ^1.0.2
+
+9.Firebase google sevices:
+	google_sign_in: ^5.0.3
+
+10.Firebase DataStore:
+	cloud_firestore: ^1.0.3
+
+11.Date Formate:
+	intl: ^0.17.0
+
+12.Sizer :  sizer: ^2.0.15
+
+13.Firebase DataStore :   cloud_firestore: ^1.0.3
+
+14. FireBase Strorage :   firebase_storage: ^8.0.1
+
+	/// State mangement
+
+15.Provider :   provider: any
+
+16.Getx :    get: ^4.6.1
+
+	/// one type of shared prefrence.
+17.Gtex Storage :   get_storage: ^2.0.3
+
+18.Hive Local database :
+  
+	 hive: ^2.1.0   (for data insert, update & delete)
+	 hive_flutter: ^1.1.0 (For data show or print)
+	 path_provider: ^2.0.9  (For set path a of data in local storage)
+
+19. Hive model :
+		
+		(Add in dev dependecies)
+	 hive_generator: ^1.1.2
+	 build_runner:
+
+20. indictor types : flutter_spinkit: ^5.1.0
+
+21.Internet connection :   connectivity_plus:
+
+22.Expanded Text :   expandable_text: ^2.3.0
+
+23.Animated Text :   animated_text_kit: ^4.2.1
+
+24. Scrren size : flutter_screenutil: ^5.5.2
+
+25. Auto fill otp & timer = firebase_phone_auth_handler: ^1.0.3
+ 
+26. Facebook Login : flutter_facebook_auth: ^4.3.4
+
+27.Image shimmer : progressive_image: ^2.0.0
+		
+
+
+
+

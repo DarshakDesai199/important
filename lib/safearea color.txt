@@ -1,0 +1,3 @@
+ SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: Colors.green,
+      systemNavigationBarColor: Colors.green.shade100));

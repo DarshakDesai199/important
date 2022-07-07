@@ -1,0 +1,92 @@
+import 'package:app/common/text.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+class TsField extends StatelessWidget {
+  final String hintText;
+  final Color? fillColor;
+  final TextInputAction? action;
+  final IconData? icon;
+  final FormFieldValidator validator;
+  final TextEditingController controller;
+  final bool hide;
+  final TextInputType? keyboardType;
+  final int? length;
+  final TextAlign align;
+  final Widget? prefix;
+  final String? header;
+
+  final BorderRadius? border;
+
+  const TsField({
+    Key? key,
+    required this.hintText,
+    this.icon,
+    required this.validator,
+    required this.controller,
+    required this.hide,
+    this.keyboardType,
+    this.length,
+    this.action,
+    this.align = TextAlign.start,
+    this.prefix,
+    this.border,
+    this.fillColor,
+    this.header = '',
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Row(
+          children: [
+            Ts(
+              text: header!,
+              weight: FontWeight.w600,
+              family: 'Nunito',
+              size: 16.h,
+            ),
+          ],
+        ),
+        SizedBox(
+          height: 5.h,
+        ),
+        TextFormField(
+          style:
+              const TextStyle(color: Colors.black, fontWeight: FontWeight.w700),
+          obscureText: hide,
+          controller: controller,
+          validator: validator,
+          textInputAction: action,
+          maxLength: length,
+          keyboardType: keyboardType,
+          textAlign: align,
+          decoration: InputDecoration(
+            hintText: hintText,
+            filled: true,
+            fillColor: fillColor,
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.grey.shade300),
+              borderRadius: border!,
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.grey.shade300),
+              borderRadius: border!,
+            ),
+            errorBorder: OutlineInputBorder(
+              borderRadius: border!,
+              borderSide: const BorderSide(color: Colors.red),
+            ),
+            focusedErrorBorder: OutlineInputBorder(
+              borderRadius: border!,
+              borderSide: const BorderSide(color: Colors.red),
+            ),
+            counter: const Offstage(),
+            prefixIcon: prefix,
+          ),
+        ),
+      ],
+    );
+  }
+}
