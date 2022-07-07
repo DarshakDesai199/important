@@ -1,0 +1,18 @@
+Widget ImageLoading({String? url, double? hight, double? width}) {
+  return CachedNetworkImage(
+    imageUrl: url!,
+    height: hight!,
+    width: width,
+    fit: BoxFit.cover,
+    placeholder: (context, url) => Shimmer.fromColors(
+      baseColor: Colors.grey.shade200,
+      highlightColor: Colors.grey.shade300,
+      child: Container(
+        height: hight,
+        width: width!,
+        color: Colors.grey.shade400,
+      ),
+    ),
+    errorWidget: (context, url, error) => const Icon(Icons.error),
+  );
+}

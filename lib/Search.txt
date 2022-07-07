@@ -1,0 +1,14 @@
+List<DocumentSnapshot> _products = snapshot.data!.docs;
+                  log("token1======>${_products.length}");
+                  if (searchText.length > 0) {
+                    products = products.where((element) {
+                      return element
+                          .get('product_name')
+                          .toString()
+                          .toLowerCase()
+                          .contains(searchText.toLowerCase());
+                    }).toList();
+                  }
+
+TextEditingController _searchController = TextEditingController();
+  String searchText = '';
