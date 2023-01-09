@@ -1,0 +1,49 @@
+  
+ /// firebase user data get function
+ 
+  void getProfileData() async {
+    final user =
+    await fireStore.collection('user').doc(FirebaseAuth.instance.currentUser!.uid).get();
+    Map<String, dynamic>? getUserData = user.data();
+    _email.text = getUserData!['email'];
+    _firstname.text = getUserData['firstName'];
+    _lastname.text = getUserData['lastName'];
+    _mobilenumber.text = getUserData['mobileNumber'];
+    Img = getUserData['imageProfile'];
+    _dropDownValue = getUserData['city'];
+    setState(() {
+      _character = getUserData['gender'] == 'Female'
+          ? SingingCharacter.female
+          : SingingCharacter.male;
+    });
+  }
+
+/// Firebase upload image function
+
+Future<String?> uploadFile({File? file, String? filename}) async {
+    print("File path:$file");
+
+    try {
+      var response = await FirebaseStorage.instance
+          .ref("user_image/$filename")
+          .putFile(file!);
+
+      return response.storage.ref("user_image/$filename").getDownloadURL();
+    } on FirebaseException catch (e) {
+      print("ERROR===>>$e");
+    }
+    return null;
+  }
+
+  /// Collection method (set UID)
+  Future addUserData() async {
+    String? userImage = await uploadFile(
+        file: _image, filename: "${kFirebaseAuth.currentUser!.email}");
+    fireStore.collection('users').doc(kFirebaseAuth.currentUser!.uid).set({
+      "email": _email.text,
+      //"password": _password.text,
+      "userImage": userImage,
+    }).catchError((e) {
+      print("ERROR==<<$e");
+    });
+  }
