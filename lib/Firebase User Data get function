@@ -1,6 +1,6 @@
   void getProfileData() async {
     final user =
-    await fireStore.doc(FirebaseAuth.instance.currentUser!.uid).get();
+    await fireStore.collection('user').doc(FirebaseAuth.instance.currentUser!.uid).get();
     Map<String, dynamic>? getUserData = user.data();
     _email.text = getUserData!['email'];
     _firstname.text = getUserData['firstName'];
