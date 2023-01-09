@@ -1,0 +1,16 @@
+  void getProfileData() async {
+    final user =
+    await fireStore.doc(FirebaseAuth.instance.currentUser!.uid).get();
+    Map<String, dynamic>? getUserData = user.data();
+    _email.text = getUserData!['email'];
+    _firstname.text = getUserData['firstName'];
+    _lastname.text = getUserData['lastName'];
+    _mobilenumber.text = getUserData['mobileNumber'];
+    Img = getUserData['imageProfile'];
+    _dropDownValue = getUserData['city'];
+    setState(() {
+      _character = getUserData['gender'] == 'Female'
+          ? SingingCharacter.female
+          : SingingCharacter.male;
+    });
+  }
