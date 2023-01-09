@@ -18,6 +18,26 @@
     });
   }
 
+
+/// pick image
+
+  final picker = ImagePicker();
+  File? _image;
+
+  Future getImage() async {
+    var pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    setState(() {
+      if (pickedFile != null) {
+        _image = File(pickedFile.path);
+      }
+    });
+  }
+
+
+
+
+
+
 /// Firebase upload image function
 
 Future<String?> uploadFile({File? file, String? filename}) async {
