@@ -1,0 +1,22 @@
+
+  static Future<bool> hasNetwork() async {
+    try {
+      final result = await InternetAddress.lookup('google.com');
+      return result.isNotEmpty && result[0].rawAddress.isNotEmpty;
+    } on SocketException catch (_) {
+      return false;
+    }
+  }
+
+  static Future<bool> isDeviceConnected() async {
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.mobile) {
+      bool isOnline = await hasNetwork();
+      return isOnline;
+    } else if (connectivityResult == ConnectivityResult.wifi) {
+      bool isOnline = await hasNetwork();
+      return isOnline;
+    } else {
+      return false;
+    }
+  }
