@@ -1,0 +1,386 @@
+/// packages
+  audioplayers: ^3.0.1
+
+
+
+
+
+
+
+
+import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
+import 'package:panda_music/constant/app_color.dart';
+import 'package:panda_music/constant/font_style.dart';
+import 'package:panda_music/constant/image_path.dart';
+
+class AudioPlayerScreen extends StatefulWidget {
+  const AudioPlayerScreen({Key? key}) : super(key: key);
+
+  @override
+  State<AudioPlayerScreen> createState() => _AudioPlayerScreenState();
+}
+
+class _AudioPlayerScreenState extends State<AudioPlayerScreen> {
+  AudioPlayer? player;
+  Duration duration = Duration();
+  Duration position = Duration();
+  bool isPause = true;
+  @override
+  void initState() {
+    player = AudioPlayer();
+    audioPlay();
+    playerComplete();
+    getAudioDuration();
+    getAudioPosition();
+    super.initState();
+  }
+
+  audioPlay() async {
+    await player!.play(UrlSource(
+        "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3"));
+  }
+
+  audioResume() async {
+    await player!.resume();
+  }
+
+  audioPause() async {
+    await player!.pause();
+  }
+
+  audioStop() async {
+    await player!.stop();
+    setState(() {
+      position = Duration();
+    });
+  }
+
+  playerComplete() {
+    player!.onPlayerComplete.listen((event) {
+      setState(() {
+        player!.stop();
+      });
+    });
+  }
+
+  getAudioDuration() {
+    player!.onDurationChanged.listen((newDuration) {
+      setState(() {
+        duration = newDuration;
+      });
+    });
+  }
+
+  getAudioPosition() {
+    player!.onPositionChanged.listen((newPosition) {
+      setState(() {
+        position = newPosition;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    audioStop();
+    player!.release();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      // backgroundColor: Color.fromRGBO(3, 23, 76, 1),
+      appBar: buildAppBar(),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20.w),
+            child: Column(
+              children: [
+                Center(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 50.h),
+                    child: Container(
+                      height: 410.h,
+                      width: 300.w,
+                      decoration: BoxDecoration(
+                        boxShadow: const [
+                          BoxShadow(
+                              color: Color.fromRGBO(0, 0, 0, 0.25),
+                              offset: Offset(0, 4),
+                              blurRadius: 10,
+                              spreadRadius: 2),
+                        ],
+                        gradient: LinearGradient(
+                          colors: const [
+                            Color.fromRGBO(27, 5, 78, 0.32),
+                            Color.fromRGBO(118, 118, 118, 0.1),
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(25.h),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Container(
+                            height: 200.h,
+                            width: 185.w,
+                            decoration: BoxDecoration(
+                              // color: Colors.white,
+                              boxShadow: const [
+                                BoxShadow(
+                                    color: Color.fromRGBO(0, 0, 0, 0.25),
+                                    offset: Offset(2, 2),
+                                    blurRadius: 10,
+                                    spreadRadius: 10),
+                              ],
+                              borderRadius: BorderRadius.circular(15.h),
+                            ),
+                            child: ClipRRect(
+                                borderRadius: BorderRadius.circular(15.h),
+                                child: Image.asset(ImagePath.album4,
+                                    fit: BoxFit.fill)),
+                          ),
+                          Column(
+                            children: [
+                              Text(
+                                "Alan walker - Faded\n",
+                                style: FontTextStyle.kWhite16W600Roboto,
+                              ),
+                              Text(
+                                "Artist - Alan walker\n",
+                                style: FontTextStyle.kWhite14W400Roboto,
+                              ),
+                              Text(
+                                "Length - 3:10 mins",
+                                style: FontTextStyle.kWhite12W300Roboto,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                Text(
+                  "Switch to video music",
+                  style: FontTextStyle.kWhite15W500Roboto,
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: 22.h),
+                  child: Stack(
+                    children: [
+                      InkWell(
+                          onTap: () {},
+                          child:
+                              Center(child: SvgPicture.asset(ImagePath.mp4))),
+                      Align(
+                        alignment: Alignment.bottomRight,
+                        child: InkWell(
+                            onTap: () {},
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 22.w),
+                              child: SvgPicture.asset(ImagePath.download),
+                            )),
+                      ),
+                    ],
+                  ),
+                ),
+                musicControlPanel(),
+                songProgress(context),
+                SizedBox(
+                  height: 60.h,
+                )
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  String _formatDuration(Duration d) {
+    if (d == null) return "--:--";
+    int minute = d.inMinutes;
+    int second = (d.inSeconds > 60) ? (d.inSeconds % 60) : d.inSeconds;
+    String format =
+        "${(minute < 10) ? "0$minute" : "$minute"}:${(second < 10) ? "0$second" : "$second"}";
+    return format;
+  }
+
+  void seekToSecond(int second) {
+    Duration duration = Duration(seconds: second);
+
+    player!.seek(duration);
+  }
+
+  Widget songProgress(BuildContext context) {
+    var style = TextStyle(color: Colors.white);
+    return Row(
+      children: <Widget>[
+        Text(
+          _formatDuration(position),
+          style: style,
+        ),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 5),
+            child: SliderTheme(
+                data: SliderTheme.of(context).copyWith(
+                  trackHeight: 2,
+                  thumbColor: Colors.amberAccent,
+                  overlayColor: Colors.amber,
+                  thumbShape: const RoundSliderThumbShape(
+                    disabledThumbRadius: 5,
+                    enabledThumbRadius: 5,
+                  ),
+                  overlayShape: const RoundSliderOverlayShape(
+                    overlayRadius: 10,
+                  ),
+                  activeTrackColor: Colors.amberAccent,
+                  inactiveTrackColor: Colors.grey,
+                ),
+                child: Slider(
+                  value: position.inSeconds.toDouble(),
+                  max: duration.inSeconds.toDouble() + 2,
+                  onChanged: (value) {
+                    seekToSecond(value.toInt());
+                    value = value;
+                  },
+                  onChangeEnd: (value) {},
+                )),
+          ),
+        ),
+        Text(
+          _formatDuration(duration),
+          style: style,
+        ),
+      ],
+    );
+  }
+
+  Padding musicControlPanel() {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 23.w, vertical: 55.h),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          InkWell(
+            onTap: () {},
+            child: SvgPicture.asset(
+              ImagePath.musicBack,
+              height: 16.h,
+              width: 16.h,
+              fit: BoxFit.fill,
+            ),
+          ),
+          InkWell(
+            onTap: () {},
+            child: SvgPicture.asset(
+              ImagePath.musicDoubleBack,
+              height: 17.h,
+              width: 25.w,
+              fit: BoxFit.fill,
+            ),
+          ),
+          InkWell(
+              onTap: () {
+                setState(() {
+                  isPause = !isPause;
+                });
+                if (isPause) {
+                  print('resume');
+                  audioResume();
+                } else {
+                  print('pause');
+                  audioPause();
+                }
+                print('Play On Tap');
+              },
+              child: !isPause
+                  ? SvgPicture.asset(
+                      ImagePath.musicPlay,
+                      height: 24.h,
+                      width: 24.h,
+                      fit: BoxFit.fill,
+                    )
+                  : SvgPicture.asset(
+                      ImagePath.pause,
+                      height: 24.h,
+                      width: 24.h,
+                      color: AppColor.white,
+                      fit: BoxFit.fill,
+                    )),
+          InkWell(
+              onTap: () {},
+              child: SvgPicture.asset(
+                ImagePath.musicDoubleForward,
+                height: 17.h,
+                width: 25.w,
+                fit: BoxFit.fill,
+              )),
+          InkWell(
+            onTap: () {},
+            child: SvgPicture.asset(
+              ImagePath.musicForward,
+              height: 16.h,
+              width: 16.h,
+              fit: BoxFit.fill,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  AppBar buildAppBar() {
+    return AppBar(
+      leading: IconButton(
+        onPressed: () {
+          Get.back();
+        },
+        splashRadius: 20,
+        icon: Icon(Icons.arrow_back),
+      ),
+      centerTitle: true,
+      title: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(100),
+            child: SvgPicture.asset(
+              ImagePath.logo,
+              width: 60.h,
+              height: 60.h,
+              fit: BoxFit.fill,
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 8.0),
+            child: Text(
+              'PANDA',
+              style: TextStyle(
+                fontSize: 10.sp,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          ),
+        ],
+      ),
+      actions: [
+        IconButton(
+            onPressed: () {},
+            splashRadius: 20,
+            icon: Icon(
+              Icons.more_vert,
+              size: 30.h,
+            ))
+      ],
+    );
+  }
+}
