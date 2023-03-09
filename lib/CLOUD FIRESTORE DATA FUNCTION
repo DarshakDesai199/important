@@ -1,0 +1,15 @@
+  getMusicData() async {
+    print('UID === ${widget.uid}');
+    var data = FirebaseFirestore.instance.collection('trending');
+    var info = await data.get();
+
+    for (var element in info.docs) {
+      if (element.id == widget.uid) {
+        audioPlayerController.audioPlay(url: element['song']);
+        audioPlayerController.putValue(
+            song: element['song_name'],
+            singer: element['singer'],
+            image: element['thumbnail']);
+      }
+    }
+  }
