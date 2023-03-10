@@ -1,0 +1,72 @@
+ File? song;
+  pickAudio() async {
+    FilePickerResult? result = await FilePicker.platform
+        .pickFiles(allowMultiple: false, type: FileType.audio);
+    if (result == null) {
+      print("No file selected");
+    } else {
+      setState(() {
+        song = File(result.files.single.path!);
+      });
+      addUserData();
+      print('Audio pick= = ${result.files.single.name}');
+    }
+  }
+  
+  
+  
+  
+  /// Firebase upload image function
+
+  Future<String?> uploadFile({File? file, String? filename}) async {
+    print("File path:$file");
+
+    try {
+      var response =
+          await FirebaseStorage.instance.ref("song/$filename").putFile(file!);
+
+      var data = await response.storage.ref("song/$filename").getDownloadURL();
+      return data;
+    } on FirebaseException catch (e) {
+      print("ERROR===>>$e");
+    }
+    return null;
+  }
+
+  /// Collection method (set UID)
+  Future addUserData() async {
+/*    DocumentReference doc =
+        FirebaseFirestore.instance.collection('trending').doc();
+    await doc.set({
+      "created": DateTime.now().toString(),
+      "singer": "King (iFeelKing)",
+      "song":
+          "https://firebasestorage.googleapis.com/v0/b/pandamusic-30591.appspot.com/o/song%2FkkSong1?alt=media&token=727b9492-8427-4ad6-9076-a248e9cd9016",
+      "song_name": "KK - yaaron",
+      "thumbnail":
+          "https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/KK_%28125%29.jpg/220px-KK_%28125%29.jpg",
+      'docId': doc.id
+    }).then((value) {
+
+    });*/
+
+    /* FirebaseFirestore.instance.collection('albums').add({
+      "album_name": "A. R. Rahman Album",
+      "singer_name": "A. R. Rahman",
+      "thumbnail":
+          "https://c.ndtvimg.com/2022-12/6egerako_ar-rahman_625x300_16_December_22.jpg",
+      "created": DateTime.now().toString()
+    });*/
+    String? songData = await uploadFile(
+        file: song, filename: "A.R.Rahman${Random().nextInt(10)}");
+    FirebaseFirestore.instance.collection('trending').add({
+      "created": DateTime.now().toString(),
+      "singer": "A. R. Rahman",
+      "song": songData,
+      // "song_name": "Ajnabi - Official Music Video",
+      "song_name": "Heer - Full Song | Jab Tak Hai Jaan |",
+      "thumbnail": "https://i.ytimg.com/vi/aNcxgxHcGYg/maxresdefault.jpg"
+    }).catchError((e) {
+      print("ERROR==<<$e");
+    });
+  }
