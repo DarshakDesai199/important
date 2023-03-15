@@ -1,0 +1,41 @@
+ Uint8list data = ///image uint8list data;
+ 
+       String _base64 = base64.encode(data);
+ 
+ 
+ 
+ Image.memory(base64Decode(_base64),
+                                    fit: BoxFit.fill)
+                                    
+                                    
+                                    
+/// Uint8list convert into file and show 
+
+
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
+
+
+  File? thumbnailFile;
+  fileConvert({required Uint8List imageInUnit8List}) async {
+    // Uint8List? imageInUnit8List; // store unit8List image here ;
+    final tempDir = await getTemporaryDirectory();
+    thumbnailFile = await File('${tempDir.path}/image.png').create();
+    thumbnailFile!.writeAsBytesSync(imageInUnit8List);
+    setState(() {});
+    return thumbnailFile;
+  }
+  
+  
+  
+**************  fileconvert call into initstate or any other where and pass Uint8list data
+
+thumbnailFile == null
+                                    ? SizedBox()
+                                    : Image.file(thumbnailFile!,
+                                        fit: BoxFit.fill),
+                                        
+                                        
+                                        
+                                        
+                                        
