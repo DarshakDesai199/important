@@ -1,0 +1,101 @@
+
+/// EXMAPLE OF PARTY PAL APP TEXT SHDOW CHANGE ANIMATION
+
+
+
+
+
+import 'dart:async';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:flutter/material.dart';
+import 'package:partypal/utils/color.dart';
+import 'package:partypal/utils/constant.dart';
+import 'package:partypal/utils/font_style.dart';
+
+class ShadowDemo extends StatefulWidget {
+  const ShadowDemo({Key? key}) : super(key: key);
+
+  @override
+  State<ShadowDemo> createState() => _ShadowDemoState();
+}
+
+class _ShadowDemoState extends State<ShadowDemo> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+
+  Color endColor = Color(0xff4CC2AD);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: TweenAnimationBuilder(
+        onEnd: () {
+          setState(() {
+            if (endColor == Color(0xff4CC2AD)) {
+              endColor = Color(0xffDD9236);
+            } else if (endColor == Color(0xffDD9236)) {
+              endColor = Color(0xff630EAB);
+            } else if (endColor == Color(0xff630EAB)) {
+              endColor = Color(0xff4AAADF);
+            } else if (endColor == Color(0xff4AAADF)) {
+              endColor = Color(0xffCACACA);
+            } else if (endColor == Color(0xffCACACA)) {
+              endColor = Color(0xffAC0000);
+            } else {
+              endColor = Color(0xff4CC2AD);
+            }
+          });
+        },
+        duration: Duration(seconds: 3),
+        tween: ColorTween(begin: Color(0xffAC0000), end: endColor),
+        builder: (context, value, child) {
+          return Center(
+            child: CustomPaint(
+              foregroundPainter: HomeShadowBlurPainter(
+                  rectWidth: 55.w, blurSigma: 60, colors: value!),
+              willChange: true,
+              child: Text(
+                "Where’s the party tonight?",
+                style: FontTextStyle.kWhite20W600SourceSans,
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class HomeShadowBlurPainter extends CustomPainter {
+  Color colors;
+  double rectWidth;
+  double blurSigma;
+  HomeShadowBlurPainter(
+      {required this.rectWidth, required this.blurSigma, required this.colors});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    Paint paint = Paint()
+      ..color = colors.withOpacity(0.15)
+      ..strokeCap = StrokeCap.round
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = rectWidth
+      ..maskFilter = MaskFilter.blur(BlurStyle.normal, blurSigma);
+    Offset center = Offset(20, 10);
+    canvas.drawRect(center & Size(Get.width * 0.6, 50.h), paint);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) {
+    return true;
+  }
+}
