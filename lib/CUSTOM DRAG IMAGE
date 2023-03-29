@@ -1,0 +1,316 @@
+import 'dart:convert';
+import 'dart:developer';
+import 'package:get/get.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
+
+import 'utils/color.dart';
+import 'utils/image_path.dart';
+
+class DemodRAG extends StatefulWidget {
+  const DemodRAG({Key? key}) : super(key: key);
+
+  @override
+  State<DemodRAG> createState() => _DemodRAGState();
+}
+
+class _DemodRAGState extends State<DemodRAG> {
+  // List imageList = [
+  //   "https://assets.hongkiat.com/uploads/nature-photography/autumn-poolside.jpg",
+  //   "https://images.unsplash.com/photo-1618588507085-c79565432917?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8YmVhdXRpZnVsJTIwbmF0dXJlfGVufDB8fDB8fA%3D%3D&w=1000&q=80",
+  //   "https://i.pinimg.com/originals/be/33/76/be3376b0f835a1766cb7a95003ea4a7d.jpg",
+  //   "https://iso.500px.com/wp-content/uploads/2016/03/stock-photo-142984111-1500x1000.jpg",
+  //   "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTnIvlpHth4EZkYuIjVkxjJ5E0uMp3qC8rbWw&usqp=CAU"
+  // ];
+
+  List imageList = [
+    ImagePath.boy2,
+    ImagePath.boy1,
+    ImagePath.boy3,
+    ImagePath.boy4,
+    ImagePath.boy5,
+  ];
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Row(
+            children: [
+              Column(
+                children: [
+                  DragTarget(
+                    onAccept: (data) {
+                      var image = jsonDecode(data.toString());
+                      log('jsonDecode----${image}');
+
+                      if (image['image'] == '1') {
+                        String str = imageList[0];
+                        imageList[0] = imageList[1];
+                        imageList[1] = str;
+                      } else if (image['image'] == '2') {
+                        String str = imageList[0];
+                        imageList[0] = imageList[2];
+                        imageList[2] = str;
+                      } else if (image['image'] == '3') {
+                        String str = imageList[0];
+                        imageList[0] = imageList[3];
+                        imageList[3] = str;
+                      } else if (image['image'] == '4') {
+                        String str = imageList[0];
+                        imageList[0] = imageList[4];
+                        imageList[4] = str;
+                      }
+                      setState(() {});
+                    },
+                    builder: (context, candidateData, rejectedData) {
+                      return Draggable(
+                        data: jsonEncode({'image': '0'}),
+                        feedback: Container(
+                          height: 250.h,
+                          width: 250.w,
+                          color: Colors.red,
+                          child: Image.asset(imageList[0], fit: BoxFit.cover),
+                        ),
+                        child: Container(
+                          height: 250.h,
+                          width: Get.width / 2,
+                          color: Colors.red,
+                          child: Image.asset(imageList[0], fit: BoxFit.cover),
+                        ),
+                      );
+                    },
+                  ),
+                  SizedBox(
+                    height: 18.h,
+                  ),
+                  Row(
+                    children: [
+                      DragTarget(
+                        onAccept: (data) {
+                          var image = jsonDecode(data.toString());
+                          log('jsonDecode----${image}');
+
+                          if (image['image'] == '0') {
+                            String str = imageList[3];
+                            imageList[3] = imageList[0];
+                            imageList[0] = str;
+                          } else if (image['image'] == '1') {
+                            String str = imageList[3];
+                            imageList[3] = imageList[1];
+                            imageList[1] = str;
+                          } else if (image['image'] == '2') {
+                            String str = imageList[3];
+                            imageList[3] = imageList[2];
+                            imageList[2] = str;
+                          } else if (image['image'] == '4') {
+                            String str = imageList[3];
+                            imageList[3] = imageList[4];
+                            imageList[4] = str;
+                          }
+                          setState(() {});
+                        },
+                        builder: (context, candidateData, rejectedData) {
+                          return Draggable(
+                            data: jsonEncode({'image': '3'}),
+                            feedback: Container(
+                              height: 100,
+                              width: 100,
+                              color: Colors.red,
+                              child:
+                                  Image.asset(imageList[3], fit: BoxFit.cover),
+                            ),
+                            child: Container(
+                              height: 100,
+                              width: 100,
+                              color: Colors.red,
+                              child:
+                                  Image.asset(imageList[3], fit: BoxFit.cover),
+                            ),
+                          );
+                        },
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      DragTarget(
+                        onAccept: (data) {
+                          var image = jsonDecode(data.toString());
+                          log('jsonDecode----${image}');
+
+                          if (image['image'] == '0') {
+                            String str = imageList[4];
+                            imageList[4] = imageList[0];
+                            imageList[0] = str;
+                          } else if (image['image'] == '1') {
+                            String str = imageList[4];
+                            imageList[4] = imageList[1];
+                            imageList[1] = str;
+                          } else if (image['image'] == '2') {
+                            String str = imageList[4];
+                            imageList[4] = imageList[2];
+                            imageList[2] = str;
+                          } else if (image['image'] == '3') {
+                            String str = imageList[4];
+                            imageList[4] = imageList[3];
+                            imageList[3] = str;
+                          }
+                          setState(() {});
+                        },
+                        builder: (context, candidateData, rejectedData) {
+                          return Draggable(
+                            data: jsonEncode({'image': '4'}),
+                            feedback: Container(
+                              height: 100,
+                              width: 100,
+                              color: Colors.red,
+                              child:
+                                  Image.asset(imageList[4], fit: BoxFit.cover),
+                            ),
+                            child: Container(
+                              height: 100,
+                              width: 100,
+                              color: Colors.red,
+                              child:
+                                  Image.asset(imageList[4], fit: BoxFit.cover),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  )
+                ],
+              ),
+              SizedBox(
+                width: 20,
+              ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  DragTarget(
+                    onAccept: (data) {
+                      var image = jsonDecode(data.toString());
+                      log('jsonDecode----${image}');
+
+                      if (image['image'] == '0') {
+                        String str = imageList[1];
+                        imageList[1] = imageList[0];
+                        imageList[0] = str;
+                      } else if (image['image'] == '2') {
+                        String str = imageList[1];
+                        imageList[1] = imageList[2];
+                        imageList[2] = str;
+                      } else if (image['image'] == '3') {
+                        String str = imageList[1];
+                        imageList[1] = imageList[3];
+                        imageList[3] = str;
+                      } else if (image['image'] == '4') {
+                        String str = imageList[1];
+                        imageList[1] = imageList[4];
+                        imageList[4] = str;
+                      }
+                      setState(() {});
+                    },
+                    builder: (context, candidateData, rejectedData) {
+                      return Draggable(
+                        data: jsonEncode({'image': '1'}),
+                        feedback: Container(
+                          height: 100,
+                          width: 100,
+                          color: Colors.red,
+                          child: Image.asset(imageList[1], fit: BoxFit.cover),
+                        ),
+                        child: Container(
+                          height: 100,
+                          width: 100,
+                          color: Colors.red,
+                          child: Image.asset(imageList[1], fit: BoxFit.cover),
+                        ),
+                      );
+                    },
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  DragTarget(
+                    onAccept: (data) {
+                      var image = jsonDecode(data.toString());
+                      log('jsonDecode----${image}');
+
+                      if (image['image'] == '0') {
+                        String str = imageList[2];
+                        imageList[2] = imageList[0];
+                        imageList[0] = str;
+                      } else if (image['image'] == '1') {
+                        String str = imageList[2];
+                        imageList[2] = imageList[1];
+                        imageList[1] = str;
+                      } else if (image['image'] == '3') {
+                        String str = imageList[2];
+                        imageList[2] = imageList[3];
+                        imageList[3] = str;
+                      } else if (image['image'] == '4') {
+                        String str = imageList[2];
+                        imageList[2] = imageList[4];
+                        imageList[4] = str;
+                      }
+                      setState(() {});
+                    },
+                    builder: (context, candidateData, rejectedData) {
+                      return Draggable(
+                        data: jsonEncode({'image': '2'}),
+                        feedback: Container(
+                          height: 100,
+                          width: 100,
+                          color: Colors.red,
+                          child: Image.asset(imageList[2], fit: BoxFit.cover),
+                        ),
+                        child: Container(
+                          height: 100,
+                          width: 100,
+                          color: Colors.red,
+                          child: Image.asset(imageList[2], fit: BoxFit.cover),
+                        ),
+                      );
+                    },
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Stack(
+                    alignment: Alignment.bottomLeft,
+                    children: [
+                      Container(
+                        width: Get.width * 0.3,
+                        height: 105.h,
+                        clipBehavior: Clip.antiAliasWithSaveLayer,
+                        decoration: BoxDecoration(
+                            color: Color.fromRGBO(159, 159, 159, 1),
+                            borderRadius: BorderRadius.circular(20.h)),
+                        child: Center(
+                            child: SvgPicture.asset(
+                          ImagePath.addRound,
+                          color: AppColor.black,
+                        )),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: CircleAvatar(
+                          radius: 12.h,
+                          backgroundColor: AppColor.lightBlue,
+                          child: Text('6'),
+                        ),
+                      )
+                    ],
+                  ),
+                ],
+              )
+            ],
+          )
+        ],
+      ),
+    );
+  }
+}
