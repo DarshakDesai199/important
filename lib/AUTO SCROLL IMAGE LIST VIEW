@@ -1,0 +1,189 @@
+import 'package:flutter/material.dart';
+
+class Demo12 extends StatefulWidget {
+  const Demo12({Key? key}) : super(key: key);
+
+  @override
+  State<Demo12> createState() => _Demo12State();
+}
+
+class _Demo12State extends State<Demo12> {
+  List imageList = [
+    'https://cdn.pixabay.com/photo/2016/12/16/15/25/christmas-1911637_960_720.jpg',
+    'https://cdn.pixabay.com/photo/2018/09/23/18/30/drop-3698073_960_720.jpg',
+    'https://cdn.pixabay.com/photo/2015/12/01/20/28/road-1072821_960_720.jpg',
+    'https://cdn.pixabay.com/photo/2015/04/19/08/33/flower-729512_960_720.jpg',
+    'https://cdn.pixabay.com/photo/2017/06/07/10/47/elephant-2380009_960_720.jpg'
+  ];
+
+  ScrollController scrollController1 = ScrollController();
+  ScrollController scrollController2 = ScrollController();
+  ScrollController scrollController3 = ScrollController();
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      double minScrollExtent1 = scrollController1.position.minScrollExtent;
+      double maxScrollExtent1 = scrollController1.position.maxScrollExtent;
+      double minScrollExtent2 = scrollController2.position.minScrollExtent;
+      double maxScrollExtent2 = scrollController2.position.maxScrollExtent;
+      double minScrollExtent3 = scrollController3.position.minScrollExtent;
+      double maxScrollExtent3 = scrollController3.position.maxScrollExtent;
+      animateToMaxMin(
+          scrollController: scrollController1,
+          direction: maxScrollExtent1,
+          max: maxScrollExtent1,
+          min: minScrollExtent1,
+          sec: 15);
+      animateToMaxMin(
+          scrollController: scrollController2,
+          direction: minScrollExtent2,
+          max: minScrollExtent2,
+          min: maxScrollExtent2,
+          sec: 15);
+      animateToMaxMin(
+          scrollController: scrollController3,
+          direction: minScrollExtent3,
+          max: minScrollExtent3,
+          min: maxScrollExtent3,
+          sec: 15);
+    });
+
+    super.initState();
+  }
+
+  animateToMaxMin(
+      {double? max,
+      double? min,
+      double? direction,
+      int? sec,
+      ScrollController? scrollController}) {
+    scrollController!
+        .animateTo(direction!,
+            duration: Duration(seconds: sec!), curve: Curves.linear)
+        .then((value) {
+      direction = direction == max ? min : max;
+      animateToMaxMin(
+          sec: sec,
+          min: min,
+          max: max,
+          scrollController: scrollController,
+          direction: direction);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: Row(
+        children: [
+          ImagesListView(
+            imageList: imageList,
+            scrollController: scrollController1,
+          ),
+          ImagesListView1(
+            imageList: imageList,
+            scrollController: scrollController2,
+          ),
+          ImagesListView2(
+            imageList: imageList,
+            scrollController: scrollController3,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class ImagesListView extends StatelessWidget {
+  final ScrollController scrollController;
+  final List imageList;
+  const ImagesListView(
+      {Key? key, required this.scrollController, required this.imageList})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: ListView.builder(
+        controller: scrollController,
+        shrinkWrap: true,
+        // scrollDirection: Axis.horizontal,
+        itemCount: imageList.length,
+        itemBuilder: (context, index) {
+          return Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: SizedBox(
+              height: 250,
+              width: 400,
+              child: Image.network(imageList[index], fit: BoxFit.cover),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class ImagesListView1 extends StatelessWidget {
+  final ScrollController scrollController;
+  final List imageList;
+  const ImagesListView1(
+      {Key? key, required this.scrollController, required this.imageList})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: ListView.builder(
+        controller: scrollController,
+        shrinkWrap: true,
+        reverse: true,
+        // scrollDirection: Axis.horizontal,
+        itemCount: imageList.length,
+        itemBuilder: (context, index) {
+          return Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: SizedBox(
+              height: 250,
+              width: 400,
+              child: Image.network(imageList[index], fit: BoxFit.cover),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class ImagesListView2 extends StatelessWidget {
+  final ScrollController scrollController;
+  final List imageList;
+  const ImagesListView2(
+      {Key? key, required this.scrollController, required this.imageList})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: ListView.builder(
+        controller: scrollController,
+        shrinkWrap: true,
+
+        // scrollDirection: Axis.horizontal,
+        itemCount: imageList.length,
+        itemBuilder: (context, index) {
+          return Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: SizedBox(
+              height: 250,
+              width: 400,
+              child: Image.network(imageList[index], fit: BoxFit.cover),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
