@@ -1,0 +1,23 @@
+getKey SHA5 MacOs command :=
+keytool -list -v -keystore ~/.android/debug.keystore -alias androiddebugkey -storepass android -keypass android
+
+
+
+flutter clean
+
+flutter pub get
+
+flutter build apk --release
+
+
+HIVE MODEL GENERATOR COMMAND :
+
+flutter packages pub run build_runner build
+
+
+
+Reduce app size command := 
+
+flutter build apk --target-platform android-arm,android-arm64,android-x64 --split-per-abi.   := Kevin
+
+flutter build apk --split-per-abi --no-sound-null-safety  := Hardip
