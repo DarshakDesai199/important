@@ -1,0 +1,97 @@
+import 'dart:async';
+
+import 'package:flutter/material.dart';
+import 'package:partypal/utils/color.dart';
+
+class StreamExample extends StatefulWidget {
+  const StreamExample({Key? key}) : super(key: key);
+
+  @override
+  State<StreamExample> createState() => _StreamExampleState();
+}
+
+class _StreamExampleState extends State<StreamExample>
+    with WidgetsBindingObserver {
+  int counter = 0;
+  StreamController<int> counterController = StreamController();
+
+  late Stream myStream;
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addObserver(this);
+    myStream = counterController.stream.asBroadcastStream();
+    super.initState();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    print('state === $state');
+    super.didChangeAppLifecycleState(state);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          counter++;
+          counterController.sink.add(counter);
+        },
+        backgroundColor: AppColor.red,
+        child: Icon(Icons.add, color: AppColor.white),
+      ),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          StreamBuilder(
+            stream: myStream,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return Center(
+                    child: Text(
+                  "${snapshot.data}",
+                  textScaleFactor: 4,
+                  style: TextStyle(color: AppColor.red),
+                ));
+              } else {
+                return Center(
+                    child: Text(
+                  "0",
+                  textScaleFactor: 4,
+                  style: TextStyle(color: AppColor.green),
+                ));
+              }
+            },
+          ),
+          StreamBuilder(
+            stream: myStream,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return Center(
+                    child: Text(
+                  "${snapshot.data}",
+                  textScaleFactor: 4,
+                  style: TextStyle(color: AppColor.red),
+                ));
+              } else {
+                return Center(
+                    child: Text(
+                  "0",
+                  textScaleFactor: 4,
+                  style: TextStyle(color: AppColor.green),
+                ));
+              }
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
