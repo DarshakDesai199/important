@@ -21,3 +21,16 @@ Reduce app size command :=
 flutter build apk --target-platform android-arm,android-arm64,android-x64 --split-per-abi.   := Kevin
 
 flutter build apk --split-per-abi --no-sound-null-safety  := Hardip
+
+
+
+GIT HUB COMMAND
+
+git config --global user.name "nevil"  
+git config --global user.email "nevilrv@gmaail.com" 
+
+
+For cheacking
+
+git config --global user.name
+git config --global user.email
