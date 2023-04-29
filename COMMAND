@@ -34,3 +34,6 @@ For cheacking
 
 git config --global user.name
 git config --global user.email
+
+
+https://www.figma.com/file/jtG7MNkDKprkWbfykYgi6f/PartyPal?node-id=0-1
