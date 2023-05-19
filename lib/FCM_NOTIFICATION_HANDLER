@@ -1,0 +1,231 @@
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:get/get.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:gstreak_mobile_app/controller/storeController/store_controller.dart';
+import 'package:gstreak_mobile_app/screen/splash_screen.dart';
+import 'package:gstreak_mobile_app/utils/notification.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+SharedPreferences? pref;
+StoreController storeController = Get.put(StoreController());
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  MobileAds.instance.initialize();
+  pref = await SharedPreferences.getInstance();
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+  const AndroidNotificationChannel channel = AndroidNotificationChannel(
+    'high_importance_channel',
+    'High Importance Notifications',
+    importance: Importance.high,
+  );
+  FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {});
+  try {
+    FirebaseMessaging.onMessage.listen(
+      (RemoteMessage message) {
+        RemoteNotification? notification = message.notification;
+        AndroidNotification? android = message.notification?.android;
+        if (notification != null && android != null) {
+          flutterLocalNotificationsPlugin.show(
+            notification.hashCode,
+            notification.title,
+            notification.body,
+            NotificationDetails(
+              android: AndroidNotificationDetails(channel.id, channel.name,
+                  icon: 'mipmap/ic_launcher'),
+            ),
+          );
+        }
+        if (notification != null) {
+          flutterLocalNotificationsPlugin.show(
+            notification.hashCode,
+            notification.title,
+            notification.body,
+            const NotificationDetails(
+              iOS: IOSNotificationDetails(),
+            ),
+          );
+        }
+
+        // print('background title == ${message.notification!.title}');
+        // print('background body == ${message.notification!.body}');
+        // print('background data == ${message.data}');
+      },
+    );
+  } catch (e) {
+    debugPrint("Show Notification error == $e");
+  }
+  await Firebase.initializeApp();
+  AppNotificationHandlers.firebaseNotificationSetup();
+  AppNotificationHandlers.showMsgHandler();
+  Stream<RemoteMessage> stream = FirebaseMessaging.onMessageOpenedApp;
+  stream.listen((RemoteMessage event) async {
+    debugPrint("event===========>$event");
+    debugPrint("notification data=-=-=-=-=-=-=-=-=-${event.data}");
+    debugPrint("notification =-=-=-=-=-=-=-=-=-${event.notification}");
+    debugPrint(
+        "notification data=-=-=-=-=-=-=-=-=-${event.notification!.title}");
+    debugPrint(
+        "notification data=-=-=-=-=-=-=-=-=-${event.notification!.body}");
+
+    if (event.notification!.title!.isNotEmpty) {
+      if (event.data['type'] == "announcement") {
+        Get.defaultDialog(
+            title: "${event.notification!.title}",
+            content: Text('${event.notification!.body}'));
+      }
+    }
+    /*   event.data["type"] == "wallet"
+        ? await Get.to(
+          () => WalletScreen(addCoin: int.parse(event.data["credits"]) > 0 ? true : false, cred: int.parse(event.data["credits"])),
+    )
+        : event.data["type"] == "category"
+        ? await Get.to(() => BottomBar(
+      selectIndex: 0,
+      addCoin: int.parse(event.data["credits"]) > 0 ? true : false,
+      cred: int.parse(event.data["credits"]),
+    ))
+        : event.data["type"] == "image"
+        ? await Get.to(() => BottomBar(
+      selectIndex: 1,
+      addCoin: int.parse(event.data["credits"]) > 0 ? true : false,
+      cred: int.parse(event.data["credits"]),
+    ))
+        : await Get.to(() => const GetStartedScreen());*/
+  });
+  runApp(const GreenStreak());
+}
+/*
+void onStart(serviceInstance) async {
+  WidgetsFlutterBinding.ensureInitialized();
+  AppNotificationHandler.firebaseNotificationSetup();
+}*/
+
+class GreenStreak extends StatefulWidget {
+  const GreenStreak({Key? key}) : super(key: key);
+
+  @override
+  State<GreenStreak> createState() => _GreenStreakState();
+}
+
+class _GreenStreakState extends State<GreenStreak> {
+  @override
+  Widget build(BuildContext context) {
+    return GetMaterialApp(
+      debugShowCheckedModeBanner: false,
+      builder: (BuildContext context, Widget? child) {
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(
+            textScaleFactor: 1,
+          ),
+          child: child!,
+        );
+      },
+      title: 'GreenStreak',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: const SplashScreen(),
+      // home: const Demo(),
+    );
+  }
+}
+
+
+
+
+/// notification handelr 
+
+
+// import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:get/get.dart';
+import 'package:gstreak_mobile_app/controller/storeController/store_controller.dart';
+
+
+class AppNotificationHandlers {
+  static final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+  static const AndroidNotificationChannel channel = AndroidNotificationChannel(
+    'high_importance_channel',
+    'High Importance Notifications',
+    importance: Importance.high,
+  );
+  static Future<void> firebaseNotificationSetup() async {
+    await Firebase.initializeApp();
+    try {
+      FirebaseMessaging.onMessage.listen(
+        (RemoteMessage message) {
+          RemoteNotification? notification = message.notification;
+          AndroidNotification? android = message.notification?.android;
+
+          if (notification != null && android != null) {
+            flutterLocalNotificationsPlugin.show(
+              notification.hashCode,
+              notification.title,
+              notification.body,
+              NotificationDetails(
+                android: AndroidNotificationDetails(channel.id, channel.name,
+                    icon: 'mipmap/ic_launcher'),
+              ),
+            );
+            print('body == ${notification.body}');
+            print('title == ${notification.title}');
+          }
+          if (notification != null) {
+            debugPrint("Notification=====$notification");
+            flutterLocalNotificationsPlugin.show(
+              notification.hashCode,
+              notification.title,
+              notification.body,
+              const NotificationDetails(
+                iOS: IOSNotificationDetails(),
+              ),
+            );
+          }
+        },
+      );
+    } catch (e) {
+      debugPrint("Show Notification error == $e");
+    }
+    FirebaseMessaging.instance.getInitialMessage().then((value) {
+      if (value != null) {
+        debugPrint("DAT");
+      } else {
+        debugPrint("OUT");
+      }
+    });
+    await FirebaseMessaging.instance
+        .setForegroundNotificationPresentationOptions(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
+  }
+
+  static void showMsgHandler() {
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      RemoteNotification? notification = message.notification;
+      // print('showMsgHandler body == ${notification!.body}');
+      // print('showMsgHandler title == ${notification.title}');
+      // print('showMsgHandler title == ${message.data}');
+
+      AndroidNotification? android = message.notification?.android;
+      if (message.data['type'] == "announcement") {
+        Get.defaultDialog(
+            title: "${message.notification!.title}",
+            content: Text('${message.notification!.body}'));
+      }
+    }).onError((e) {
+      // debugPrint('Error Notification : ....$e');
+    });
+  }
+}
