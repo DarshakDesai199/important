@@ -1,9 +1,0 @@
-storyController.preLoadImages.clear();
-for (var i = 0; i <= storyController.storyDetails.length + 2; i++) {
-  // storyController.image = Image.network(storyController.backgroundImageList[i], fit: BoxFit.cover,);
-  Image image = Image(image: CachedNetworkImageProvider(storyController.backgroundImageList[i]), fit: BoxFit.cover);
-  storyController.preLoadImages.add(image);
-}
-for (var i = 0; i <= storyController.preLoadImages.length - 1; i++) {
-  precacheImage(storyController.preLoadImages[i].image, Get.context!);
-}
