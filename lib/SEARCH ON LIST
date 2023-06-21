@@ -1,0 +1,28 @@
+WithDrawTextField(
+  title: "",
+  hintText: "Search",
+  widget: const SizedBox(),
+  textEditingController: cryptoController.searchController.value,
+  onChange: (v) {
+    setState(() {
+      if (cryptoController.searchController.value.text.isEmpty) {
+        cryptoController.searchCryptoList.value = cryptoController.cryptoList;
+      } else {
+        cryptoController.searchCryptoList.value = cryptoController.cryptoList
+            .where((u) => (u['currencyName'].toLowerCase().contains(v!.toLowerCase()) ||
+                u['currencySymbol'].toLowerCase().contains(v.toLowerCase())))
+            .toList();
+      }
+      cryptoController.searchCryptoList.refresh();
+    });
+  },
+  height: 45,
+),
+
+
+// another way
+
+recentSnapshot.data!.docs[index]['song_name']
+                                  .toString()
+                                  .toLowerCase()
+                                  .contains(searchValue)
