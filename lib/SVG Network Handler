@@ -1,0 +1,21 @@
+// Package
+jovial_svg: ^1.0.6
+
+
+
+ScalableImageWidget.fromSISource(
+  onError: (p0) {
+    return CachedNetworkImage(
+      fit: BoxFit.contain,
+      fadeInDuration: const Duration(milliseconds: 604),
+      // fadeInCurve: Curves.easeIn,
+      imageUrl: widget.isForOutGoing ? currentUserImage : widget.profileImage,
+      placeholder: (context, url) => CircularProgressIndicator(),
+      errorWidget: (context, url, error) => Icon(Icons.error),
+    );
+  },
+  si: ScalableImageSource.fromSvgHttpUrl(
+    Uri.parse(widget.isForOutGoing ? currentUserImage : widget.profileImage),
+  ),
+  fit: BoxFit.cover,
+)
