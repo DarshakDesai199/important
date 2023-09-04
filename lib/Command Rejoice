@@ -1,0 +1,21 @@
+For TestFlight, Not mange manually.
+<key>ITSAppUsesNonExemptEncryption</key>
+<false/>
+
+Play store build failed issue of permission not use in project.
+xmlns:tools="http://schemas.android.com/tools"
+<uses-permission android:name="com.google.android.gms.permission.AD_ID" tools:node="remove"/>
+
+
+Command :
+
+
+git status
+git add . / git add -A
+git commit -m “”
+git push
+pod install --repo-update
+ git clone -b profile_view_module http://git.rejoicehub.com/rejoicehub/leaderbridge/leaderbridge-mobile-app.git
+flutter build apk --target-platform android-arm,android-arm64,android-x64 --split-per-abi.
+flutter build appbundle
+flutter pub cache clean
