@@ -65,3 +65,39 @@ class ConnectivityProvider extends GetxController {
     return isConnected;
   }
 }
+
+
+
+/// Another way to implement (it's better)
+
+
+  StreamSubscription<ConnectivityResult>? connectivitySubscription;
+  final Connectivity _connectivity = Connectivity();
+
+
+  void initState() {
+    connectivitySubscription = _connectivity.onConnectivityChanged.listen(updateConnectionState);
+     super.initState();
+  }
+  Future<void> updateConnectionState(ConnectivityResult result) async {
+    if (result == ConnectivityResult.mobile || result == ConnectivityResult.wifi) {
+      showStatus(result, true);
+    } else {
+      showStatus(result, false);
+    }
+  }
+
+  void showStatus(ConnectivityResult result, bool status) {
+    status == true
+        ? Get.back()
+        : Get.to(
+            // No internet screen navigate
+            () => NoInternetScreen(),
+          );
+  }
+
+
+
+
+
+
