@@ -1,0 +1,115 @@
+import 'dart:async';
+
+import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:gstreak_mobile_app/config/image_path.dart';
+import 'package:gstreak_mobile_app/config/text_style.dart';
+
+//  google_maps_flutter: ^2.2.0
+//   geolocator: ^9.0.2
+
+/// AndroidManifest.xml
+// <meta-data android:name="com.google.android.geo.API_KEY"
+// android:value="AIzaSyD3S-AAkrvSOfN0xflcG64LUm_4gviAX5c"/>
+
+class GoogleMapWithCustomIcon extends StatefulWidget {
+  const GoogleMapWithCustomIcon({super.key});
+
+  @override
+  State<GoogleMapWithCustomIcon> createState() => _GoogleMapWithCustomIconState();
+}
+
+class _GoogleMapWithCustomIconState extends State<GoogleMapWithCustomIcon> {
+  LatLng? _center;
+  Position? currentLocation;
+  Completer<GoogleMapController> mapController = Completer();
+  CameraPosition? kGooglePlex;
+  final Set<Marker> markers = Set();
+  BitmapDescriptor? customIcon;
+
+  initState() {
+    super.initState();
+    getUserLocation();
+  }
+
+  getUserLocation() async {
+    await BitmapDescriptor.fromAssetImage(const ImageConfiguration(size: Size(100, 100)), ImagePath.myLocationIcon)
+        .then((d) {
+      setState(() {
+        customIcon = d;
+      });
+    });
+
+    LocationPermission permission;
+    permission = await Geolocator.requestPermission();
+
+    currentLocation = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+
+    debugPrint("lat ${currentLocation!.latitude} long ${currentLocation!.longitude}");
+    // await storeController.findNearbyStore(
+    //     latLocation: currentLocation!.latitude, longLocation: currentLocation!.longitude);
+    setState(() {
+      _center = LatLng(currentLocation!.latitude, currentLocation!.longitude);
+      debugPrint("center latlog $_center");
+
+      kGooglePlex = CameraPosition(
+        target: LatLng(currentLocation!.latitude, currentLocation!.longitude),
+        zoom: 17,
+      );
+
+      markers.add(Marker(
+        markerId: MarkerId(_center.toString()),
+        position: _center!,
+        infoWindow: const InfoWindow(
+          title: 'My Location',
+          snippet: '',
+        ),
+
+        icon: customIcon!, //Icon for Marker
+      ));
+
+      List x = [];
+      // add marker
+      // Api call
+      // for (var i = 0; i < storeController.findNearbyStoreList.length; i++) {
+      for (var i = 0; i < x.length; i++) {
+        markers.add(Marker(
+          markerId: MarkerId(_center.toString()),
+          position: LatLng(x.findNearbyStoreList[i]["location"]["coordinates"][1],
+              x.findNearbyStoreList[i]["location"]["coordinates"][0]),
+          infoWindow: InfoWindow(
+            title: '${x.findNearbyStoreList[i]["name"]} ',
+            snippet: '${x.findNearbyStoreList[i]["description"]}',
+          ),
+          icon: BitmapDescriptor.defaultMarker, //Icon for Marker
+        ));
+      }
+    });
+    debugPrint('center $_center');
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: kGooglePlex != null
+          ? GoogleMap(
+              mapType: MapType.normal,
+              markers: markers,
+              initialCameraPosition: kGooglePlex!,
+              buildingsEnabled: true,
+              zoomControlsEnabled: false,
+              trafficEnabled: true,
+              onMapCreated: (GoogleMapController controller) {
+                mapController.complete(controller);
+              },
+            )
+          : Center(
+              child: Text(
+                "Near by store not available",
+                style: AppTextStyle.regular.copyWith(fontSize: 16),
+              ),
+            ),
+    );
+  }
+}
