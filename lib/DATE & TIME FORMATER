@@ -115,6 +115,10 @@
 
     debugPrint("formattedTime ==== $formattedTime6");
 
+
+///  Time formate (Chat)  ***********************************************************************
+
+
     String formatRelativeTime(DateTime dateTime) {
       final now = DateTime.now();
       final difference = now.difference(dateTime);
@@ -139,3 +143,28 @@
     }
 
  
+class TimeAgo {
+  static String timeAgoSinceDate(DateTime currentTime, DateTime date,
+      {bool numericDates = true}) {
+    final difference = currentTime.difference(date);
+    if (difference.inDays > 8) {
+      return "${DateFormat.yMMMd().format(date)}";
+    } else if (difference.inDays >= 2) {
+      return '${difference.inDays} days ago';
+    } else if (difference.inDays >= 1) {
+      return (numericDates) ? '1 day ago' : 'Yesterday';
+    } else if (difference.inHours >= 2) {
+      return '${difference.inHours} h';
+    } else if (difference.inHours >= 1) {
+      return (numericDates) ? '1 hour ago' : 'An hour ago';
+    } else if (difference.inMinutes >= 2) {
+      return '${difference.inMinutes} min.';
+    } else if (difference.inMinutes >= 1) {
+      return (numericDates) ? '1 min.' : 'A min.';
+    } else if (difference.inSeconds >= 3) {
+      return '${difference.inSeconds} sec';
+    } else {
+      return 'Just now';
+    }
+  }
+}
