@@ -1,0 +1,38 @@
+  bool _isAnswerReadMore = true;
+
+  String text =
+      "What strategies does your production organization use to boost efficiency and minimize downtime in manufacturing?";
+
+   Wrap(
+                      children: [
+                        RichText(
+                            text: TextSpan(
+                                text: _isAnswerReadMore
+                                    ? text.toString().substring(0, min(text.length, 100))
+                                    : text.toString().substring(0, min(text.length, 500)),
+                                style: TextStyle(color: Colors.black, fontSize: 18))),
+                        text.length > 100
+                            ? Text.rich(
+                                TextSpan(
+                                  text: '',
+                                  style: TextStyle(fontSize: 18, height: 1.5, overflow: TextOverflow.ellipsis),
+                                  children: [
+                                    TextSpan(
+                                      text: text.length > 100
+                                          ? ' ${_isAnswerReadMore ? 'Read More' : 'Read Less'}'
+                                          : '',
+                                      style:
+                                          TextStyle(color: kPinkColor, fontSize: 14, overflow: TextOverflow.ellipsis),
+                                      recognizer: TapGestureRecognizer()
+                                        ..onTap = () {
+                                          setState(() {
+                                            _isAnswerReadMore = !_isAnswerReadMore;
+                                          });
+                                        },
+                                    ),
+                                  ],
+                                ),
+                              )
+                            : SizedBox(),
+                      ],
+                    ),
