@@ -1,0 +1,66 @@
+
+  var data;
+
+  /// Graph Ql Data get through a post request
+  getData() async {
+    data = null;
+    var headers = {'Content-Type': 'application/json'};
+    var request =
+        http.Request('POST', Uri.parse('https://api-ap-south-1.hygraph.com/v2/clk9k1ifv229u01ur8xua6cs7/master'));
+
+    Map payload = {
+      "query": "query MyQuery{contentForTools {updatedAt,title,slug,description}}",
+      "variables": {"id": 122231}
+    };
+
+    request.body = jsonEncode(payload);
+    // '''{"query":"query MyQuery{contentForTools {updatedAt,title,slug,description}}","variables":{"id":122231}}''';
+    request.headers.addAll(headers);
+    http.StreamedResponse response = await request.send();
+    if (response.statusCode == 200) {
+      // print("API DATA ---- " + await response.stream.bytesToString());
+      var responseData = await http.Response.fromStream(response);
+      debugPrint("response data == ${responseData.body}");
+
+      data = jsonDecode(responseData.body)['data'];
+      setState(() {});
+    } else {
+      print("reasonPhrase------ ${response.reasonPhrase}");
+    }
+  }
+
+  /// Graph Ql Data get through a get request
+  Future<void> getDataTypePost() async {
+    data = null;
+
+    final headers = {'Content-Type': 'application/json'};
+    final endpoint = 'https://api-ap-south-1.hygraph.com/v2/clk9k1ifv229u01ur8xua6cs7/master';
+
+    final query = '''
+    query MyQuery {
+      contentForTools {
+        updatedAt
+        title
+        slug
+        description
+      }
+    }
+  ''';
+
+    final variables = {"id": 122231};
+    debugPrint("encodeComponent ===== ${Uri.encodeComponent(query)}");
+    debugPrint("encodeComponent ===== ${Uri.encodeComponent(jsonEncode(variables))}");
+
+    final url = Uri.parse(
+        '$endpoint?query=${Uri.encodeComponent(query)}&variables=${Uri.encodeComponent(jsonEncode(variables))}');
+
+    final response = await http.get(url, headers: headers);
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> responseData = jsonDecode(response.body);
+      data = responseData['data'];
+      setState(() {});
+    } else {
+      print("reasonPhrase: ${response.reasonPhrase}");
+    }
+  }
