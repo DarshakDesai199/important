@@ -1,0 +1,27 @@
+  static Future<void> signInWithApple() async {
+    try {
+      final credential = await SignInWithApple.getAppleIDCredential(
+        scopes: [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName,
+        ],
+      );
+
+      debugPrint(
+          "apple email ** ${credential.email}\n apple name ** ${credential.familyName} ${credential.givenName}\n} ");
+
+      final AuthCredential authCredential = AppleAuthProvider.credential(credential.authorizationCode);
+
+      final UserCredential authResult = await FirebaseAuth.instance.signInWithCredential(authCredential);
+
+      final User user = authResult.user!;
+      print('User ID: ${user.uid}');
+      print("apple login -- $credential");
+      debugPrint("sign in with apple --- $credential");
+
+      // Now send the credential (especially `credential.authorizationCode`) to your server to create a session
+      // after they have been validated with Apple (see `Integration` section for more information on how to do this)
+    } catch (e) {
+      debugPrint("error of sign in with apple --- $e");
+    }
+  }
