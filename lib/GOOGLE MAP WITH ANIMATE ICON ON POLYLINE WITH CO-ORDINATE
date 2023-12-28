@@ -1,0 +1,198 @@
+//Pacakge
+flutter_polyline_points:
+google_maps_flutter: ^2.5.0
+
+import 'dart:convert';
+import 'dart:math';
+
+import 'package:flutter/material.dart';
+import 'package:flutter_polyline_points/flutter_polyline_points.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:http/http.dart' as http;
+// import 'package:rentop/config/custom_image.dart';
+
+class MyApp1 extends StatefulWidget {
+  @override
+  _MyApp1State createState() => _MyApp1State();
+}
+
+class _MyApp1State extends State<MyApp1> {
+  GoogleMapController? mapController;
+  final List<LatLng> polyPoints = []; // For holding Co-ordinates as LatLng
+  final Set<Polyline> polyLines = {}; // For holding instance of Polyline
+  final Set<Marker> markers = {}; // For holding instance of Marker
+  var data;
+
+  // Dummy Start and Destination Points
+  double startLat = 23.551904;
+  double startLng = 90.532171;
+  double endLat = 23.560625;
+  double endLng = 90.531813;
+
+  void _onMapCreated(GoogleMapController controller) {
+    mapController = controller;
+    setMarkers();
+  }
+
+  Future<void> _animateMarkerAlongPolyline(List<LatLng> route) async {
+    for (int i = 0; i < route.length - 1; i++) {
+      await Future.delayed(Duration(seconds: 1));
+      LatLng currentPosition = route[i];
+
+      LatLng nextPosition = route[i + 1];
+      Future.delayed(Duration(milliseconds: 500), () {
+        mapController!.animateCamera(CameraUpdate.newLatLng(nextPosition));
+        _updateMarkerPosition(currentPosition, nextPosition);
+      });
+    }
+  }
+
+  Future<void> _updateMarkerPosition(LatLng position, LatLng nextPosition) async {
+    double rotation = calculateRotation(position, nextPosition);
+    markers.removeWhere((marker) => marker.markerId.value == 'currentLocation');
+    markers.add(Marker(
+      markerId: MarkerId('currentLocation'),
+      position: position,
+      icon: BitmapDescriptor.defaultMarker,
+      rotation: rotation,
+      infoWindow: InfoWindow(title: 'Your Location'),
+    ));
+    setState(() {});
+  }
+
+  double calculateRotation(LatLng from, LatLng to) {
+    double rotation;
+    double angle = (180 / pi) * atan2(to.latitude - from.latitude, to.longitude - from.longitude);
+    rotation = (90 - angle);
+    return rotation;
+  }
+
+  setMarkers() async {
+    markers.add(
+      Marker(
+        markerId: MarkerId("currentLocation"),
+        position: LatLng(startLat, startLng),
+        // icon: await BitmapDescriptor.fromAssetImage(ImageConfiguration(size: Size(16, 16)), AppAssets.user),
+        icon: BitmapDescriptor.defaultMarker,
+        infoWindow: InfoWindow(
+          title: "currentLocation",
+          snippet: "Home Sweet Home",
+        ),
+      ),
+    );
+
+    markers.add(Marker(
+      markerId: MarkerId("Destination"),
+      position: LatLng(endLat, endLng),
+      infoWindow: InfoWindow(
+        title: "Masjid",
+        snippet: "5 star ratted place",
+      ),
+    ));
+    setState(() {});
+  }
+
+  void getJsonData() async {
+    // Create an instance of Class NetworkHelper which uses http package
+    // for requesting data to the server and receiving response as JSON format
+
+    NetworkHelper network = NetworkHelper(
+      startLat: startLat,
+      startLng: startLng,
+      endLat: endLat,
+      endLng: endLng,
+    );
+
+    // getData() returns a json Decoded data
+    data = await network.getData();
+    for (int i = 0; i < data["routes"][0]["legs"][0]["steps"].length; i++) {
+      for (int j = 0;
+          j < PolylinePoints().decodePolyline(data["routes"][0]["legs"][0]["steps"][i]["polyline"]['points']).length;
+          j++) {
+        polyPoints.add(LatLng(
+            PolylinePoints().decodePolyline(data["routes"][0]["legs"][0]["steps"][i]["polyline"]['points'])[j].latitude,
+            PolylinePoints()
+                .decodePolyline(data["routes"][0]["legs"][0]["steps"][i]["polyline"]['points'])[j]
+                .longitude));
+      }
+    }
+    debugPrint("-----polyPoints----- $polyPoints");
+    setPolyLines();
+    _animateMarkerAlongPolyline(polyPoints);
+  }
+
+  setPolyLines() {
+    Polyline polyline = Polyline(
+      polylineId: PolylineId("polyline"),
+      color: Colors.blue,
+      points: polyPoints,
+    );
+    polyLines.add(polyline);
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getJsonData();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text('Polyline Demo'),
+          backgroundColor: Colors.green[700],
+        ),
+        body: GoogleMap(
+          onMapCreated: _onMapCreated,
+          initialCameraPosition: CameraPosition(
+            target: const LatLng(23.560625, 90.531813),
+            zoom: 15,
+          ),
+          markers: markers,
+          polylines: polyLines,
+        ),
+      ),
+    );
+  }
+}
+
+//Create a new class to hold the Co-ordinates we've received from the response data
+
+class LineString {
+  LineString(this.lineString);
+
+  List<dynamic> lineString;
+}
+
+class NetworkHelper {
+  NetworkHelper({required this.startLng, required this.startLat, required this.endLng, required this.endLat});
+
+  final String url = 'https://maps.googleapis.com/maps/api/directions/json';
+  final String apiKey = 'AIzaSyAKM-hmztT_ti69qHIvdF9y38Z0na2pzNA';
+  final String journeyMode = 'driving-car'; // Change it if you want or make it variable
+  final double startLng;
+  final double startLat;
+  final double endLng;
+  final double endLat;
+
+  Future getData() async {
+    http.Response response = await http.get(Uri.parse('https://maps.googleapis.com/maps/api/directions/json'
+        '?origin=${startLat},${startLng}'
+        '&destination=${endLat},${endLng}'
+        '&key=$apiKey'));
+
+    debugPrint('https://maps.googleapis.com/maps/api/directions/json'
+        '?origin=${startLat},${startLng}'
+        '&destination=${endLat},${endLng}'
+        '&key=$apiKey');
+    if (response.statusCode == 200) {
+      String data = response.body;
+      return jsonDecode(data);
+    } else {
+      print("2131111123111311${response.statusCode}");
+    }
+  }
+}
