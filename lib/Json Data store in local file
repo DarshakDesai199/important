@@ -1,0 +1,29 @@
+  onDataSave() async {
+    try {
+      List productList = [];
+
+      QuerySnapshot data = await fireStoreInstance.collection('Admin').doc('offer_list').collection('offer').get();
+
+      data.docs.forEach((element) {
+        productList.add(element.data());
+      });
+      debugPrint("length ---  ${productList.length}");
+      String jsonData = jsonEncode(productList);
+      String filePath = '/Users/dreamworld/StudioProjects/dhanyadhara/assets/offer.json';
+      saveJsonToFile(filePath, jsonData);
+    } catch (e) {
+      debugPrint("error of data save --- $e");
+    }
+  }
+
+  void saveJsonToFile(String filePath, String jsonData) {
+    try {
+      File file = File(filePath);
+      file.writeAsStringSync(jsonData);
+
+      print('Data saved to file: $filePath');
+    } catch (e) {
+      // TODO
+      debugPrint("error saveJsonToFile --- ${e}");
+    }
+  }
