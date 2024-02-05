@@ -17,5 +17,27 @@ git push
 pod install --repo-update
  git clone -b profile_view_module http://git.rejoicehub.com/rejoicehub/leaderbridge/leaderbridge-mobile-app.git
 flutter build apk --target-platform android-arm,android-arm64,android-x64 --split-per-abi.
+
+
+flutter clean && cd ios && pod deintegrate && rm -rf .symlinks && rm -rf Podfile.lock && cd .. && flutter pub get && cd ios && pod install --repo-update
+
+
 flutter build appbundle
-flutter pub cache clean
+flutter pub cache clean  
+flutter format .
+flutter pub deps --unused
+
+sudo gem install cocoapods
+
+git status
+git add . / git add -A
+git commit -m “”
+git push 
+pod install --repo-update
+Pod repo remove trunk
+
+
+$ cd ios
+$ rm -rf Pods Podfile.lock
+$ pod cache clean --allpod
+$ pod install
