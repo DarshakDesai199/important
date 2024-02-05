@@ -1,0 +1,80 @@
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+class MyHomePage extends StatefulWidget {
+  const MyHomePage({super.key});
+
+  @override
+  State<MyHomePage> createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  List<String> texts = ['This', 'Parallax Scroll', 'Looks Amazing!', 'Right...!', 'Let Us Know in the Comments :D'];
+
+  late ScrollController controller;
+
+  @override
+  void initState() {
+    controller = ScrollController();
+    super.initState();
+
+    controller.addListener(() {
+      setState(() {});
+    });
+  }
+
+  List image = [
+    'https://images.unsplash.com/photo-1583144584182-1717fab24b1e?q=80&w=1770&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    'https://images.unsplash.com/photo-1431440869543-efaf3388c585?q=80&w=1770&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    'https://images.unsplash.com/photo-1585241645927-c7a8e5840c42?q=80&w=1770&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    'https://images.unsplash.com/photo-1517544845501-bb7810f64d76?q=80&w=1771&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    'https://images.unsplash.com/photo-1705931607347-de7e96ec683e?q=80&w=1770&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: ListView.builder(
+        controller: controller,
+        itemCount: 5,
+        itemBuilder: (context, index) {
+          return Container(
+            height: MediaQuery.of(context).size.height,
+            clipBehavior: Clip.hardEdge,
+            decoration: const BoxDecoration(),
+            child: Stack(
+              children: [
+                Container(
+                  transform: Matrix4.identity()
+                    ..translate(
+                        0.0,
+                        controller.hasClients
+                            ? (-(index * MediaQuery.of(context).size.height) + controller.position.pixels) / 1.2
+                            : 0.0),
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height,
+                /*  child: Image.asset(
+                    'assets/landing/${index + 1}.jpg',
+                    fit: BoxFit.cover,
+                  ),*/
+                   child: Image.network(
+                    image[index],
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                Center(
+                    child: Text(
+                  texts[index],
+                  style: GoogleFonts.kaushanScript(
+                    fontSize: 100.0,
+                    color: Colors.white,
+                  ),
+                )),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
