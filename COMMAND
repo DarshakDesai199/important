@@ -5,6 +5,9 @@ flutter pub deps --unused
 
 sudo gem install cocoapods
 
+flutter clean && cd ios && pod deintegrate && rm -rf .symlinks && rm -rf Podfile.lock && cd .. && flutter pub get && cd ios && pod install --repo-update && cd ..
+
+
 git status
 git add . / git add -A
 git commit -m “”
@@ -18,13 +21,21 @@ git commit commit code
 git stash
 git stash pop
    
- 
+ `git reset HEAD`
+`git push origin +HEAD`
+
 
 
 flutter build apk --target-platform android-arm,android-arm64,android-x64 --split-per-abi.
 
  git config --list 
 git config --local user.name 'Darshak Desai' --replace-all
+
+$ cd ios
+$ rm -rf Pods Podfile.lock
+$ pod cache clean --allpod
+$ pod install
+
 
 
 
@@ -67,6 +78,15 @@ For cheacking
 
 git config --global user.name
 git config --global user.email
+
+
+Package Publish :
+dart pub publish --dry-run
+dart pub publish
+
+
+
+SHA Generate Code : keytool -list -v -keystore ~/.android/debug.keystore -alias androiddebugkey -storepass android -keypass android 
 
 
 /// Party Pal
