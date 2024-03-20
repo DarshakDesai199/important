@@ -1,0 +1,55 @@
+/// For email validation
+
+extension EmailValidator on String {
+  bool isValidEmail() {
+    final RegExp emailRegex = RegExp(
+      r'^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+',
+    );
+    return emailRegex.hasMatch(this);
+  }
+}
+
+Example :
+
+ String email = 'example@example.com';
+  print(email.isValidEmail()); // Output: true
+
+
+/// For Password validation
+
+extension PasswordValidator on String {
+  bool isValidPassword() {
+    // Check if password length is at least 8 characters
+    if (this.length < 8) {
+      return false;
+    }
+
+    // Check if password contains at least one uppercase letter
+    if (!this.contains(RegExp(r'[A-Z]'))) {
+      return false;
+    }
+
+    // Check if password contains at least one lowercase letter
+    if (!this.contains(RegExp(r'[a-z]'))) {
+      return false;
+    }
+
+    // Check if password contains at least one digit
+    if (!this.contains(RegExp(r'[0-9]'))) {
+      return false;
+    }
+
+    // Check if password contains at least one special character
+    if (!this.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
+      return false;
+    }
+
+    return true;
+  }
+}
+
+Example : 
+
+String password = 'Password123!';
+  print(password.isValidPassword()); // Output: true
+
