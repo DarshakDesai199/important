@@ -1,0 +1,102 @@
+// blurhash: ^1.1.1
+// transparent_image: ^2.0.1
+
+import 'package:blurhash/blurhash.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:transparent_image/transparent_image.dart';
+
+class ImageShow extends StatelessWidget {
+  ImageShow({super.key});
+
+  final List<String> _blurHashList = [
+    "LEHV6nWB2yk8pyoJadR*.7kCMdnj",
+    "LGF5]+Yk^6#M@-5c,1J5@[or[Q6.",
+    "L6Pj0^i_.AyE_3t7t7R**0o#DgR4",
+    "LKO2?U%2Tw=w]~RBVZRi};RPxuwH"
+  ];
+
+  final List<String> _imageList = [
+    'https://images.pexels.com/photos/33109/fall-autumn-red-season.jpg?auto=compress&cs=tinysrgb&w=600',
+    "https://images.pexels.com/photos/443446/pexels-photo-443446.jpeg?auto=compress&cs=tinysrgb&w=600",
+    "https://images.pexels.com/photos/1402787/pexels-photo-1402787.jpeg?auto=compress&cs=tinysrgb&w=600",
+    "https://images.pexels.com/photos/45853/grey-crowned-crane-bird-crane-animal-45853.jpeg?auto=compress&cs=tinysrgb&w=600"
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        body: BlurHashImage(
+      blurHash: _blurHashList[0],
+      image: _imageList[0],
+    ));
+  }
+}
+
+class BlurHashImage extends StatefulWidget {
+  const BlurHashImage(
+      {Key? key, required this.blurHash, required this.image, this.width, this.height, this.fit = BoxFit.cover})
+      : super(key: key);
+
+  final String blurHash;
+  final String image;
+  final double? width;
+  final double? height;
+  final BoxFit fit;
+
+  @override
+  State<BlurHashImage> createState() => _BlurHashImageState();
+}
+
+class _BlurHashImageState extends State<BlurHashImage> {
+  Uint8List? _imageDataBytes;
+
+  @override
+  void initState() {
+    super.initState();
+    blurHashDecode();
+  }
+
+  Future blurHashDecode() async {
+    Uint8List? imageDataBytes;
+
+    try {
+      imageDataBytes = await BlurHash.decode(widget.blurHash, 32, 32);
+    } on PlatformException catch (e) {
+      throw Exception(e.message);
+    }
+
+    setState(() {
+      _imageDataBytes = imageDataBytes;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return _imageDataBytes == null
+        ? SizedBox(width: widget.width, height: widget.height)
+        : Stack(
+            children: <Widget>[
+              FractionallySizedBox(
+                widthFactor: 1,
+                child: Image.memory(
+                  _imageDataBytes!,
+                  width: widget.width,
+                  height: widget.height,
+                  fit: widget.fit,
+                ),
+              ),
+              FractionallySizedBox(
+                widthFactor: 1,
+                child: FadeInImage.memoryNetwork(
+                  placeholder: kTransparentImage,
+                  image: widget.image,
+                  width: widget.width,
+                  height: widget.height,
+                  fit: widget.fit,
+                ),
+              )
+            ],
+          );
+  }
+}
