@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Download PocketCalc</title>
+  <script>
+    window.onload = function () {
+      const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+      // iOS
+      if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+        window.location.href = "https://apps.apple.com/in/app/pocketcalc-app/id6738273676";
+        return;
+      }
+      // Android
+      if (/android/i.test(userAgent)) {
+        window.location.href = "https://play.google.com/store/apps/details?id=com.dignizant.pocketcalc";
+        return;
+      }
+      // Fallback (Desktop or unknown)
+      window.location.href = "https://yourwebsite.com"; // optional landing page
+    };
+  </script>
+</head>
+<body>
+  <p>Redirecting to the correct store...</p>
+</body>
+</html>
