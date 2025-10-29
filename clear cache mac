@@ -1,0 +1,3 @@
+curl -fsSL https://raw.githubusercontent.com/jemishavasoya/dev-cleaner/main/dev-cleaner.sh -o dev-cleanup.sh && chmod +x dev-cleanup.sh && ./dev-cleanup.sh
+
+xcrun simctl shutdown all && xcrun simctl erase all
