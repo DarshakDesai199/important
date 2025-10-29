@@ -1,3 +1,19 @@
 curl -fsSL https://raw.githubusercontent.com/jemishavasoya/dev-cleaner/main/dev-cleaner.sh -o dev-cleanup.sh && chmod +x dev-cleanup.sh && ./dev-cleanup.sh
 
 xcrun simctl shutdown all && xcrun simctl erase all
+
+
+
+
+cache clear for mac:
+
+rm -fr .gradle
+rm -rf ~/.pub-cache
+rm -rf ~/Library/Flutter
+rm -rf ~/.gradle/caches/
+rm -rf ~/.android/build-cache/
+rm -rf build/
+rm -rf ~/Library/Caches/*
+rm -rf ~/Library/Developer/Xcode/DerivedData
+rm -rf ~/Library/Developer/Xcode/Archives
+Check What’s Taking Space : du -sh ~/* | sort -h
